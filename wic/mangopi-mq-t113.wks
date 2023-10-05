@@ -1,0 +1,6 @@
+# short-description: Create SD card image for MangoPi-MQ (T113) board
+# long-description: Creates a partitioned SD card image for MangoPi-MQ (T113) board
+# Boot files are located in the first vfat partition.
+include t113-boot.wks
+
+part / --source rootfs --ondisk mmcblk0 --fstype=ext4 --label root --align 4 --use-uuid

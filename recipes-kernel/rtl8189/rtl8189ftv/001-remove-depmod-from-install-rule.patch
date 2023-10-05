@@ -1,0 +1,12 @@
+diff --git a/Makefile b/Makefile
+index dfca305..1f576ee 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2301,7 +2301,6 @@ strip:
+ 
+ install:
+ 	install -p -m 644 $(MODULE_NAME).ko  $(MODDESTDIR)
+-	/sbin/depmod -a ${KVER}
+ 
+ uninstall:
+ 	rm -f $(MODDESTDIR)/$(MODULE_NAME).ko

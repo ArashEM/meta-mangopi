@@ -1,0 +1,45 @@
+diff --git a/Makefile b/Makefile
+index 7dff48c..6add348 100644
+--- a/Makefile
++++ b/Makefile
+@@ -30,10 +30,10 @@ OBJCOPY=$(CROSS_COMPILE)-objcopy
+ HOSTCC=gcc
+ HOSTSTRIP=strip
+ 
+-DATE=/bin/date
+-CAT=/bin/cat
+-ECHO=/bin/echo
+-WORKDIR=$(/bin/pwd)
++DATE=date
++CAT=cat
++ECHO=echo
++WORKDIR=$(pwd)
+ MAKE=make
+ 
+ # Objects
+@@ -54,7 +54,7 @@ begin:
+ 	@$(CC) -v 2>&1 | tail -1
+ 
+ build_revision:
+-	@/bin/expr `cat .build_revision` + 1 > .build_revision
++	@expr `cat .build_revision` + 1 > .build_revision
+ 
+ .PHONY: tools boot.img
+ .SILENT:
+@@ -111,12 +111,12 @@ format:
+ tools:
+ 	$(MAKE) -C tools all
+ 
+-mkboot: build tools
++mkboot: build
+ 	cp $(TARGET)-boot.bin $(TARGET)-boot-spi.bin
+ 	cp $(TARGET)-boot.bin $(TARGET)-boot-sd.bin
+-	tools/mksunxi $(TARGET)-fel.bin 8192
+-	tools/mksunxi $(TARGET)-boot-spi.bin 8192
+-	tools/mksunxi $(TARGET)-boot-sd.bin 512
++	awboot-mksunxi $(TARGET)-fel.bin 8192
++	awboot-mksunxi $(TARGET)-boot-spi.bin 8192
++	awboot-mksunxi $(TARGET)-boot-sd.bin 512
+ 
+ spi-boot.img: mkboot
+ 	rm -f spi-boot.img

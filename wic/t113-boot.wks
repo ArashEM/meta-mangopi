@@ -1,0 +1,6 @@
+# short-description: Create SD card image for T133-Sx SoC
+# long-description: Creates a partitioned SD card image for T133-Sx SoC.
+# Boot files are located in the first vfat partition.
+
+part awboot     --align 8     --size 128K    --ondisk mmcblk0 --source rawcopy           --sourceparams="file=awboot-boot-sd.bin" --no-table
+part /boot      --align 4096  --size 20480K  --ondisk mmcblk0 --source bootimg-partition --sourceparams="loader=u-boot" --fstype=vfat --label boot --active   --use-uuid
