@@ -10,4 +10,10 @@ iface wlan0 inet dhcp
         pre-up wpa_supplicant -B -Dnl80211 -iwlan0 -c/etc/wpa_supplicant.conf
         post-down killall -q wpa_supplicant
 
+# CAN interface
+auto can0
+iface can0 inet manual
+    pre-up /sbin/ip link set can0 type can bitrate 125000
+    up /sbin/ifconfig can0 up
+    down /sbin/ifconfig can0 down
 

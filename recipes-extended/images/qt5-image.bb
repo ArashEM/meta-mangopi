@@ -49,6 +49,7 @@ FB_TOOLS = " \
     fb-test \
     fbset-modes \
     fbset \
+    libdrm-tests \
 "
 
 WIFI_TOOLS = " \
