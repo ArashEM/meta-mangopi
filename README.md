@@ -20,7 +20,7 @@ source poky/oe-init-build-env mangopi-mq
 3. Start build process
 ```bash
 bitbake qt5-image
-bitback -c do_populate_sdk qt5-image
+bitbake -c do_populate_sdk qt5-image
 ```
 4. Flash `wic` image into your SD card
 ```bash
