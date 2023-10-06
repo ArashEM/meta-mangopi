@@ -1151,7 +1151,7 @@ index 804aa19..9d5eaff 100644
 +                        reg = <0x5604000 0x1000>;
 +                        clocks = <&ccu CLK_TVE>;
 +                        resets = <&ccu RST_BUS_TVE>;
-+                        status = "okay";
++                        status = "disabled";
 +
 +			port {
 +				tve_in_tcon_tv0: endpoint {
