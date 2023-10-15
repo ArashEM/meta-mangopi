@@ -66,6 +66,8 @@ MISC_TOOLS += " \
     htop \
     lsof \
     e2fsprogs-resize2fs \
+    os-release \
+    lsb-release \
 "
 
 TSLIB = " \

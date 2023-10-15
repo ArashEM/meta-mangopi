@@ -266,7 +266,7 @@ PACKAGECONFIG_append_pn-qemu-system-native = " sdl"
 # track the version of this file when it was generated. This can safely be ignored if
 # this doesn't mean anything to you.
 CONF_VERSION = "1"
-INHERIT += "rm_work"
+INHERIT += "rm_work image-buildinfo"
 BB_GENERATE_MIRROR_TARBALLS = "1"
 PACKAGE_FEED_URIS = "http://192.168.17.63:80"
 EXTRA_IMAGE_FEATURES += " package-management "
