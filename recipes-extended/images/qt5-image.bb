@@ -68,6 +68,7 @@ MISC_TOOLS += " \
     e2fsprogs-resize2fs \
     os-release \
     lsb-release \
+    usbutils \
 "
 
 TSLIB = " \

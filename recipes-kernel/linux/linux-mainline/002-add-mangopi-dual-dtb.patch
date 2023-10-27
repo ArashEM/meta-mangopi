@@ -1740,7 +1740,7 @@ index 0000000..35d67c7
 +};
 +
 +&ehci0 {
-+	status = "okay";
++	status = "disabled";
 +};
 +
 +&dmic {
@@ -1753,7 +1753,7 @@ index 0000000..35d67c7
 +
 +
 +&ohci0 {
-+	status = "okay";
++	status = "disabled";
 +};
 +
 +&ohci1 {
