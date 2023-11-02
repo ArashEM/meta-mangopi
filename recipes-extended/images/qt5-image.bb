@@ -69,6 +69,7 @@ MISC_TOOLS += " \
     os-release \
     lsb-release \
     usbutils \
+    libusbgx \
 "
 
 TSLIB = " \
