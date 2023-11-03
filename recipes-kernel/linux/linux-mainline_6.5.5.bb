@@ -12,7 +12,6 @@ SRC_URI = "\
     file://001-second_core_support_in_platsmp.patch \
     file://002-add-mangopi-dual-dtb.patch \
     file://defconfig \
-    file://usb.cfg \
     "
 SRC_URI[sha256sum] = "8cf10379f7df8ea731e09bff3d0827414e4b643dd41dc99d0af339669646ef95"
 
