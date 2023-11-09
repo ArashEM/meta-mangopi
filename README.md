@@ -1,5 +1,10 @@
 # Introduction 
 This is BSP layer for [Mangopi-MQ](https://mangopi.org/mangopi_mq) which uses _T113-S3_ SoC.
+Following preipherals are working and tested
+1. `TCON` with `RGB` interface (default to 800x480)
+2. `CAN0`
+3. `USB-OTG` in device mode only (default to `ecm`, `acm` gadget)
+4. `USB-HOST`
 
 # Getting started
 1. Clone required layers:
