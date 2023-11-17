@@ -1,0 +1,8 @@
+[Match]
+Name=wlan0
+
+[Network]
+DHCP=v4
+
+[DHCPv4]
+UseHostName=false
