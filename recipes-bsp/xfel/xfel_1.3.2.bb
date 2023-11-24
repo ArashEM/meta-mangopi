@@ -15,4 +15,15 @@ EXTRA_OEMAKE_class-nativesdk = 'CROSS_COMPILE="${HOST_PREFIX}" CC="${CC} ${CFLAG
 SRC_URI = "https://github.com/xboot/xfel/archive/refs/tags/v${PV}.tar.gz"
 SRC_URI[md5sum] = "8329259c312f389aeab464eb9025ffcc"
 
+do_install_class-nativesdk() {
+    mkdir -p ${D}${prefix}
+    export DESTDIR=${D}
+    oe_runmake 'PREFIX=${prefix}' install
+}
+
+FILES_${PN}_append_class-nativesdk += " \
+    ${prefix}/* \
+    ${base_libdir_native}/* \
+"
+
 BBCLASSEXTEND = "native nativesdk"
