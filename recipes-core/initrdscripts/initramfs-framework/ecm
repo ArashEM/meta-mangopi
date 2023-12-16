@@ -30,4 +30,8 @@ ecm_run() {
 	# End functions
 
 	ls /sys/class/udc > UDC
+
+    # Configure interface
+    sleep 2
+    ifconfig usb0 192.168.20.2 netmask 255.255.255.0 up
 }
