@@ -1,0 +1,112 @@
+diff --git a/.build_revision b/.build_revision
+index d737cf8..9c64c70 100644
+--- a/.build_revision
++++ b/.build_revision
+@@ -1 +1 @@
+-6160
++6168
+diff --git a/Makefile b/Makefile
+index 3640610..36109d9 100644
+--- a/Makefile
++++ b/Makefile
+@@ -154,5 +154,5 @@ spi-boot.img: mkboot
+ 	dd if=$(TARGET)-boot-spi.bin of=spi-boot.img bs=2k
+ 	dd if=$(TARGET)-boot-spi.bin of=spi-boot.img bs=2k seek=32 # Second copy on page 32
+ 	dd if=$(TARGET)-boot-spi.bin of=spi-boot.img bs=2k seek=64 # Third copy on page 64
+-	# dd if=linux/boot/$(DTB) of=spi-boot.img bs=2k seek=128 # DTB on page 128
+-	# dd if=linux/boot/$(KERNEL) of=spi-boot.img bs=2k seek=256 # Kernel on page 256
++	dd if=linux/boot/$(DTB) of=spi-boot.img bs=2k seek=128 # DTB on page 128
++	dd if=linux/boot/$(KERNEL) of=spi-boot.img bs=2k seek=256 # Kernel on page 256
+diff --git a/arch/arm32/mach-t113s3/sunxi_spi.c b/arch/arm32/mach-t113s3/sunxi_spi.c
+index ea30b6e..08d7800 100644
+--- a/arch/arm32/mach-t113s3/sunxi_spi.c
++++ b/arch/arm32/mach-t113s3/sunxi_spi.c
+@@ -815,3 +815,34 @@ uint32_t spi_nand_read(sunxi_spi_t *spi, uint8_t *buf, uint32_t addr, uint32_t r
+ 	}
+ 	return len;
+ }
++
++int     spi_nor_detect(sunxi_spi_t *spi)
++{
++	uint8_t tx[4];
++	uint8_t rx[2];
++	
++	tx[0] = 0x90;
++	tx[1] = 0x00;
++	tx[2] = 0x00;
++	tx[3] = 0x00;
++	
++	spi_transfer(spi, spi->info.mode, tx, sizeof(tx), rx, sizeof(rx));
++	trace("MF-ID: 0x%x, DEV-ID: 0x%x\r\n", rx[0], rx[1]); 
++
++	if( rx[0] && rx[1] )
++		return 0;
++	else
++		return -1;
++}
++
++uint32_t spi_nor_read(sunxi_spi_t *spi, uint8_t *buf, uint32_t addr, uint32_t rxlen)
++{
++	uint8_t tx[4];
++
++	tx[0] = 0x03;
++	tx[1] = (uint8_t)(addr >> 16);
++	tx[2] = (uint8_t)(addr >> 8);
++	tx[3] = (uint8_t)(addr >> 0);
++	spi_transfer(spi, spi->info.mode, tx, sizeof(tx), buf, rxlen);
++	return rxlen;
++}
+diff --git a/arch/arm32/mach-t113s3/sunxi_spi.h b/arch/arm32/mach-t113s3/sunxi_spi.h
+index 0bddf59..b081e31 100644
+--- a/arch/arm32/mach-t113s3/sunxi_spi.h
++++ b/arch/arm32/mach-t113s3/sunxi_spi.h
+@@ -47,5 +47,7 @@ int		 sunxi_spi_init(sunxi_spi_t *spi);
+ void	 sunxi_spi_disable(sunxi_spi_t *spi);
+ int		 spi_nand_detect(sunxi_spi_t *spi);
+ uint32_t spi_nand_read(sunxi_spi_t *spi, uint8_t *buf, uint32_t addr, uint32_t rxlen);
++int 	spi_nor_detect(sunxi_spi_t *spi);
++uint32_t spi_nor_read(sunxi_spi_t *spi, uint8_t *buf, uint32_t addr, uint32_t rxlen);
+ 
+ #endif
+diff --git a/main.c b/main.c
+index 28fe962..c427408 100644
+--- a/main.c
++++ b/main.c
+@@ -151,11 +151,11 @@ int load_spi_nand(sunxi_spi_t *spi, image_info_t *image)
+ 	unsigned int		   size;
+ 	uint64_t UNUSED_DEBUG	   start, time;
+ 
+-	if (spi_nand_detect(spi) != 0)
++	if (spi_nor_detect(spi) != 0)
+ 		return -1;
+ 
+ 	/* get dtb size and read */
+-	spi_nand_read(spi, image->of_dest, CONFIG_SPINAND_DTB_ADDR, (uint32_t)sizeof(boot_param_header_t));
++	spi_nor_read(spi, image->of_dest, CONFIG_SPINAND_DTB_ADDR, (uint32_t)sizeof(boot_param_header_t));
+ 	if (of_get_magic_number(image->of_dest) != OF_DT_MAGIC) {
+ 		error("SPI-NAND: DTB verification failed\r\n");
+ 		return -1;
+@@ -165,12 +165,12 @@ int load_spi_nand(sunxi_spi_t *spi, image_info_t *image)
+ 	debug("SPI-NAND: dt blob: Copy from 0x%08x to 0x%08lx size:0x%08x\r\n", CONFIG_SPINAND_DTB_ADDR,
+ 		  (uint32_t)image->of_dest, size);
+ 	start = time_us();
+-	spi_nand_read(spi, image->of_dest, CONFIG_SPINAND_DTB_ADDR, (uint32_t)size);
++	spi_nor_read(spi, image->of_dest, CONFIG_SPINAND_DTB_ADDR, (uint32_t)size);
+ 	time = time_us() - start;
+ 	info("SPI-NAND: read dt blob of size %u at %.2fMB/S\r\n", size, (f32)(size / time));
+ 
+ 	/* get kernel size and read */
+-	spi_nand_read(spi, image->dest, CONFIG_SPINAND_KERNEL_ADDR, (uint32_t)sizeof(linux_zimage_header_t));
++	spi_nor_read(spi, image->dest, CONFIG_SPINAND_KERNEL_ADDR, (uint32_t)sizeof(linux_zimage_header_t));
+ 	hdr = (linux_zimage_header_t *)image->dest;
+ 	if (hdr->magic != LINUX_ZIMAGE_MAGIC) {
+ 		debug("SPI-NAND: zImage verification failed\r\n");
+@@ -180,7 +180,7 @@ int load_spi_nand(sunxi_spi_t *spi, image_info_t *image)
+ 	debug("SPI-NAND: Image: Copy from 0x%08x to 0x%08lx size:0x%08x\r\n", CONFIG_SPINAND_KERNEL_ADDR,
+ 		  (uint32_t)image->dest, size);
+ 	start = time_us();
+-	spi_nand_read(spi, image->dest, CONFIG_SPINAND_KERNEL_ADDR, (uint32_t)size);
++	spi_nor_read(spi, image->dest, CONFIG_SPINAND_KERNEL_ADDR, (uint32_t)size);
+ 	time = time_us() - start;
+ 	info("SPI-NAND: read Image of size %u at %.2fMB/S\r\n", size, (f32)(size / time));
+ 
